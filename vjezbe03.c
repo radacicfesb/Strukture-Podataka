@@ -21,12 +21,12 @@ int IspisiListu(P_OSOBA);
 int DodajNaKraj(P_OSOBA, char[], char[], int);
 P_OSOBA Nadi(P_OSOBA, int, char[]);
 int Brisi(P_OSOBA);
-int NadiPrethodnog(P_OSOBA,P_OSOBA);
+int NadiPrethodnog(P_OSOBA, P_OSOBA);
 int UnosIza(P_OSOBA, char[], char[], int);
 int UnosIspred(P_OSOBA, P_OSOBA, char[], char[], int);
-int SortirajListu(P_OSOBA, char[], int);
-void SpremiDatoteci(P_OSOBA);
-int CitajIzDatoteke(P_OSOBA);
+int SortirajListu(P_OSOBA, int);
+int SpremiDatoteci(P_OSOBA, char*);
+int CitajIzDatoteke(P_OSOBA, char*);
 int BrojiElemente(P_OSOBA);
 
 
@@ -45,16 +45,31 @@ int main() {
 	if (DodajNaKraj(&Head, "dad", "wrwr", 2043) == -1)
 		printf("puka je malloc");
 	IspisiListu(&Head);
-	
+
 	Brisi(Nadi(&Head, 2, "Izdrzi"), &Head);
+	
 
-	IspisiListu(&Head);
-
-	//UnosIza(Nadi(&Head, 2, "Stagod"), "Duje", "Glavina", 1957);
+	UnosIza(Nadi(&Head, 2, "Stagod"), "Duje", "Glavina", 1957);
 	UnosIspred(&Head, Nadi(&Head, 2, "Stagod"), "Duje", "Glavina", 1957);
 	IspisiListu(&Head);
 
 	printf("%d", BrojiElemente(&Head));
+
+	printf("prije sortiranja:\n");
+	IspisiListu(&Head);
+	if (SortirajListu(&Head, 2) != 1)
+		printf("puklo sortiranje");
+	printf("posli sortiranja:\n");
+	IspisiListu(&Head);
+
+	if (CitajIzDatoteke(&Head, "in.txt") == -1)
+		printf("puka malok");
+	IspisiListu(&Head);
+
+	SpremiDatoteci(&Head, "out.txt");
+
+
+
 
 	return 0;
 
@@ -197,7 +212,7 @@ int UnosIza(P_OSOBA P, char Ime[], char Prezime[], int God) {
 }
 
 int UnosIspred(P_OSOBA HEAD, P_OSOBA P, char Ime[], char Prezime[], int God) {
-	
+
 	P_OSOBA os;
 	P_OSOBA temp;
 
@@ -212,50 +227,101 @@ int UnosIspred(P_OSOBA HEAD, P_OSOBA P, char Ime[], char Prezime[], int God) {
 	strcpy(os->prezime, Prezime);
 	os->god = God;
 	os->Next = NULL;
-	
-	temp = NadiPrethodnog(HEAD,P);
+
+	temp = NadiPrethodnog(HEAD, P);
 	temp->Next = os;
 	os->Next = P;
 
 	return 0;
 }
- int SortirajListu(P_OSOBA P, char Trazeno[], int C) { //SLAT CE SE GLAVA
-	//1-ime, 2-prezime, 3-god
-	int n=0;//duzina liste
-	int newn = 0;
-	int swap = 0;
-	int i;
-	P_OSOBA temp, prev_j, end;
-	P = P->Next;
+int SortirajListu(P_OSOBA P, int C) { //SLAT CE SE GLAVA
+   //1-ime, 2-prezime, 3-god
+	P_OSOBA i = P;
+	P_OSOBA j = NULL;
+	P_OSOBA prev_j = NULL;
+	P_OSOBA end = NULL;
 
-	end = NULL;
+	
 	if (C == 1)
 	{
-	
-	   n = BrojiElemente(P);
-	   while (swap != 1) {
-		   swap = 0;
-		   for (i = 1; i < n; i++) {
 
-			   if (strcmp(P->ime, P->Next->ime) > 0)
+		while (i->Next != end)
+		{
+			prev_j = i;
+			j = prev_j->Next;
 
-		   }
-	   }
+			while (j->Next != end)
+			{
+				if (strcmp(j->ime, j->Next->ime) > 0)
+				{
+					prev_j->Next = j->Next;
+					j->Next = j->Next->Next;
+					prev_j->Next->Next = j;
+					j = prev_j->Next;
+				}
+				prev_j = j;
+				j = j->Next;
+			}
+			end = j;
+		}
+
+		return 1;
+		
 	}
 	else if (C == 2)
 	{
-		
+		while (i->Next != end)
+		{
+			prev_j = i;
+			j = prev_j->Next;
+
+			while (j->Next != end)
+			{
+				if (strcmp(j->prezime, j->Next->prezime) > 0)
+				{
+					prev_j->Next = j->Next;
+					j->Next = j->Next->Next;
+					prev_j->Next->Next = j;
+					j = prev_j->Next;
+				}
+				prev_j = j;
+				j = j->Next;
+			}
+			end = j;
+		}
+
+		return 1;
 	}
 	else if (C == 3)
 	{
-		int a;
-		sscanf(Trazeno, "%d", &a);
 		
+		while (i->Next != end)
+		{
+			prev_j = i;
+			j = prev_j->Next;
+
+			while (j->Next != end)
+			{
+				if (j->god > j->Next->god)
+				{
+					prev_j->Next = j->Next;
+					j->Next = j->Next->Next;
+					prev_j->Next->Next = j;
+					j = prev_j->Next;
+				}
+				prev_j = j;
+				j = j->Next;
+			}
+			end = j;
+		}
+
+		return 1;
+
 	}
 	else
 		printf("nisi napisa sta trazis u pozivu funkcije");
 	return NULL;
-	
+
 
 }
 
@@ -269,4 +335,54 @@ int BrojiElemente(P_OSOBA P) { //SALJES HEAD
 
 	return a;
 
+}
+
+int CitajIzDatoteke(P_OSOBA P, char* Filename) {
+
+	P_OSOBA os;
+	os = NULL;
+	char* buff = NULL;
+	FILE* fp = fopen(Filename, "r");
+
+	buff = (char*)malloc(sizeof(char) * 128);
+	memset(buff, '\0', 128);
+
+	while (!feof(fp)) {
+
+		if (P->Next == NULL) {
+			os = NULL;
+			os = (P_OSOBA)malloc(sizeof(struct _osoba));
+			P->Next = os;
+
+			if (os == NULL) {
+				return -1;
+			}
+		}
+
+
+			fgets(buff, 127, fp);
+			sscanf(buff, "%s %s %d", P->Next->ime, P->Next->prezime, &P->Next->god, fp);
+			P->Next->Next = NULL;
+			P = P->Next;
+	}
+
+	fclose(fp);
+
+	return 1;
+
+}
+
+int SpremiDatoteci(P_OSOBA P, char* Filename) {
+
+	FILE* fp = fopen(Filename, "w");
+	P = P -> Next; //necu head ispisan ka
+	while (P != NULL)
+	{
+		fprintf(fp, "%s %s %d", P->ime, P->prezime, P->god);
+		fprintf(fp, "\n");
+		P = P->Next;
+
+	}
+	fclose(fp);
+	return 1;
 }
