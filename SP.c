@@ -22,26 +22,29 @@ int ProduktPolinoma(P_Polinom, P_Polinom, P_Polinom);
 int UnosPolinoma(P_Polinom, int, int);
 
 int main() {
-	struct Polinom P1,P2,S,U;
+	struct Polinom P1, P2, S, U;
 	P1.Next = NULL;
 	P2.Next = NULL;
 	S.Next = NULL;
 	U.Next = NULL;
 	int koeficijent, potencija;
-	
+
 	UnosPolinoma(&P1, 3, 3);
 	UnosPolinoma(&P2, 2, 3);
-	
+
 	//CitajIzDatoteke("aaaaa.txt", &P1);
 	//CitajIzDatoteke("bbbbb.txt", &P2);
 
-	//ProduktPolinoma(P1.Next, P2.Next, &U);
+	
 	SumaPolinoma(P1.Next, P2.Next, &S);
 	IspisPolinoma(P1.Next);
 	IspisPolinoma(P2.Next);
+	printf("suma:\n");
 	IspisPolinoma(S.Next);
-	//IspisPolinoma(U.Next);
-	
+	ProduktPolinoma(P1.Next, P2.Next, &U);
+	printf("produkt:\n");
+	IspisPolinoma(U.Next);
+
 
 	return 0;
 }
@@ -98,15 +101,16 @@ int ProduktPolinoma(P_Polinom P1, P_Polinom P2, P_Polinom U) {
 			P2 = P2->Next;
 		}
 		P2 = temp;
+		P1 = P1->Next;
 	}
-	P1 = P1->Next;
+	
 
 	return 0;
 }
 
 int UnosPolinoma(P_Polinom P1, int koeficijent, int potencija) {
 	P_Polinom q;
-	
+
 	while (P1->Next != NULL && P1->Next->Potencija > potencija)
 		P1 = P1->Next;
 	q = (P_Polinom)malloc(sizeof(struct Polinom));
