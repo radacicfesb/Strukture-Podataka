@@ -51,6 +51,7 @@ int main() {
 	printf("\n");
 	ZbrojPolinoma(Head1.Next, Head2.Next, &HeadS);
 	IspisiListu(HeadS.Next);
+	printf("\n");
 
 
 	printf("Umnozak polinoma");
@@ -71,9 +72,10 @@ int CitajIzDatoteke(P_Polinom P)
 	fileName = (char*)malloc(sizeof(char) * 128);
 	memset(fileName, '\0', 127);
 
-	//printf("Unesite ime dadoteke:\n ");
-	//scanf(" %s", fileName);
-
+	printf("Unesite ime dadoteke:\n ");
+	scanf(" %s", fileName);
+	
+	fp = fopen(fileName, "r");
 
 	while (!feof(fp))
 	{
