@@ -1,0 +1,114 @@
+#ifdef _MSC_VER
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
+#include<stdio.h>
+#include<stdlib.h>
+
+
+struct Lista;
+typedef Lista* P_Listica;
+struct Lista {
+	int el;
+	P_Listica Next;
+};
+
+P_Listica NewBlankElement();
+int Push(P_Listica);
+int Write(P_Listica);
+int Rand(int, int);
+int Pop(P_Listica);
+int PutInQueue(P_Listica)
+
+
+int main() {
+	P_Listica HeadS;
+	HeadS = NULL;
+	HeadS = (P_Listica)malloc(sizeof(struct Lista));
+	HeadS->Next = NULL;
+	
+	Push(HeadS);
+	Push(HeadS);
+	Push(HeadS);
+	Push(HeadS);
+	Pop(HeadS);
+
+	Write(HeadS->Next);
+	
+	return 0;
+}
+
+P_Listica NewBlankElement() {	//kad vrati vidi jel NULL, ako je nije uspia
+
+	P_Listica q;
+	q = NULL;
+	q = (P_Listica)malloc(sizeof(struct Lista));
+	return q;
+}
+
+int Push(P_Listica S) {
+	P_Listica q;
+	q = NewBlankElement();
+	if (q == NULL)
+		return -1;
+	while (S->Next != NULL)
+		S = S->Next;
+
+	q->el = Rand(10, 100);
+	q->Next = NULL;
+	S->Next = q;
+
+	return 0;
+}
+
+int Write(P_Listica P) {
+	while(P!=NULL){
+		printf("%d\n", P->el);
+		P=P->Next;
+	}
+	return 0;
+}
+
+int Rand(int min, int max) {
+	int bm = max - min + 1;
+	int gr = RAND_MAX - (RAND_MAX % bm);
+	int rnd = rand();
+
+	while(rnd > gr)
+		rnd = rand();
+
+	return (rnd%bm) + min;
+}
+
+int Pop(P_Listica S) {
+	P_Listica temp;
+	int x;
+
+	temp = S->Next;
+	S->Next = S->Next->Next;
+	x = temp->el;
+	free(temp);
+
+	printf("Popnia je %d\n", x);
+	return x;
+}
+
+int PutInQueue(P_Listica S){
+	S=S->Next;
+
+
+	int x;
+	P_Listica q;
+	q=NewBlankElement();
+	P_Listica tmp;
+	tmp=S->Next;
+	q->el = Rand(10, 100);
+	x=q->el;
+	q->Next = tmp;
+
+	S->Next=q;
+
+	printf("Upisa je %d\n", x);
+	return 0;
+
+}
