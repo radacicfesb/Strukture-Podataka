@@ -7,33 +7,37 @@
 #include <string.h>
 
 typedef struct Node;
-typedef struct Node *P_Node;
-typedef struct Node{
+typedef struct Node* P_Node;
+typedef struct Node {
 
-    char el;
-    struct Node *Next;
+	char el;
+	struct Node* Next;
 
 };
 
 int ReadFromFile(P_Node, char*);
 int Push(P_Node, char);
-int Calculate(P_Node, char);
+int Calculate(P_Node, P_Node, char);
 int Pop(P_Node);
 P_Node NewBlankElement();
 int Print(P_Node);
 
 int main()
 {
-    P_Node Head;
+	P_Node Head;
+	P_Node Head2;
+	Head2 = NULL;
 	Head = NULL;
-    Head = (P_Node)malloc(sizeof(struct Node));
+	Head = (P_Node)malloc(sizeof(struct Node));
+	Head2 = (P_Node)malloc(sizeof(struct Node));
+	Head2->Next = NULL;
 	Head->Next = NULL;
 
-	ReadFromFile(Head,"pos.txt");
+	ReadFromFile(Head, "pos.txt");
 
 	Print(Head);
 
-    return 0;
+	return 0;
 }
 
 int ReadFromFile(P_Node P, char* Filename)	//file je broj po crti
@@ -53,9 +57,9 @@ int ReadFromFile(P_Node P, char* Filename)	//file je broj po crti
 
 		fgets(buff, 127, fp);
 		//sscanf(buff, "%c", &el);
-		for(i = 0; buff[i] != '\0'; i++)
+		for (i = 0; buff[i] != '\0'; i++)
 		{
-			if(buff[i] != ' ')
+			if (buff[i] != ' ')
 				Push(P, buff[i]);
 		}
 		//Push(P, el);
@@ -64,41 +68,47 @@ int ReadFromFile(P_Node P, char* Filename)	//file je broj po crti
 }
 
 
-int Calculate(P_Node P, char op){
+int Calculate(P_Node Head, P_Node P, char op) {
 
-    float op1 = 0;
-    float op2 = 0;
+	float op1 = 0;
+	float op2 = 0;
 
-    switch (op)
-    {
+	while (lenOfList(Head) != 1) {
 
-    case ('/'):
-        op1 = Pop(P);
-        op2 = Pop(P);
-        Push(P, op2 / op1);
-        break;
+		if (isdigit(op))
+			Push(P, op);
 
-	case ('*'):
-        op1 = Pop(P);
-        op2 = Pop(P);
-        Push(P, op1 * op2);
-        break;
+		switch (op)
+		{
 
-    case ('+'):
-        op1 = Pop(P);
-        op2 = Pop(P);
-        Push(P, op1 + op2);
-        break;
+		case ('/'):
+			op1 = Pop(P);
+			op2 = Pop(P);
+			Push(P, op2 / op1);
+			break;
 
-    case ('-'):
-        op1 = Pop(P);
-        op2 = Pop(P);
-        Push(P, op2 - op1);
-        break;
+		case ('*'):
+			op1 = Pop(P);
+			op2 = Pop(P);
+			Push(P, op1 * op2);
+			break;
 
+		case ('+'):
+			op1 = Pop(P);
+			op2 = Pop(P);
+			Push(P, op1 + op2);
+			break;
+
+		case ('-'):
+			op1 = Pop(P);
+			op2 = Pop(P);
+			Push(P, op2 - op1);
+			break;
+
+		}
+
+		return 0;
 	}
-
-    return 0;
 }
 
 int Push(P_Node S, char x) {
@@ -109,7 +119,7 @@ int Push(P_Node S, char x) {
 	q = NewBlankElement();
 	if (q == NULL)
 		return -1;
-	
+
 	tmp = S->Next;
 
 	q->el = x;
@@ -157,5 +167,17 @@ int Print(P_Node P) {
 	}
 
 	return 0;
+}
+
+int lenOfList(P_Node P)
+{
+	int count = 0;  
+	struct Node* current = P;  
+	while (current != NULL)
+	{
+		count++;
+		current = current->Next;
+	}
+	return count;
 }
 
