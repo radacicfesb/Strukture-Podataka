@@ -96,7 +96,7 @@ int IspisiStablo(P_Node S) {
 }
 
 int IzrazUStack(P_Stack P, char* buff) {
-	char op[512] = {0};
+	char op[512];
 	int offset = 0;
 
 	while (sscanf(buff, " %s %n", op, &offset) == 1)
