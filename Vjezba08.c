@@ -19,12 +19,10 @@ struct Stack {
 	P_Stack Next;
 };
 
-P_Node Novi(char*);
-int Unesi(P_Node, P_Node);
-P_Node NadiNajmanjiEl(P_Node, P_Node);
-int ListaDirectory(P_Node, P_Stack);
 int Shell(P_Node, P_Stack);
 int Push(P_Stack, P_Node);
+P_Node Novi(char*);
+int Unesi(P_Node, P_Node);
 P_Node Pop(P_Stack);
 int ValjanArgument(char*);
 int DirectoryPostoji(P_Node, char*);
@@ -32,10 +30,10 @@ P_Node DirectoryPrekoImena(P_Node, char*);
 int md(P_Node, char*);
 P_Node cd(P_Node, P_Node, char*, P_Stack);
 int dir(P_Node, char*, P_Stack);
+P_Node NadiNajmanjiEl(P_Node, P_Node);
+int ListaDirectory(P_Node, P_Stack);
 
-
-int main()
-{
+int main() {
 	P_Node root = Novi("root");
 	P_Stack Head;
 	Head= (P_Stack)malloc(sizeof(sizeof(struct Stack)));
@@ -44,6 +42,39 @@ int main()
 	Head->Directory = NULL;
 
 	return Shell(root, Head);
+}
+
+
+
+P_Node NadiNajmanjiEl(P_Node PrviElUDir, P_Node NadiEl) {
+	P_Node P = PrviElUDir;
+
+	while (P->Next != NULL && strcmp(P->ime, NadiEl->ime) < 0)
+		P = P->Next;
+
+	return P;
+}
+
+int ListaDirectory(P_Node Roditelj, P_Stack Head) {
+	P_Node TrenutniFile = Roditelj->Dijete;
+
+	printf("%s\n ", Roditelj->ime);
+
+	if (TrenutniFile) {
+		if (Head->Next)
+
+		return -1; 
+	}
+
+	do {
+		if (!TrenutniFile->Dijete)
+			printf(" %s\n ", TrenutniFile->ime);
+		else
+			printf(" %s*\n ", TrenutniFile->ime);
+		TrenutniFile = TrenutniFile->Next;
+	} while (TrenutniFile != NULL);
+
+	return 0;
 }
 
 P_Node Novi(char* ime) {
@@ -76,41 +107,7 @@ int Unesi(P_Node Roditelj, P_Node novi) {
 	return 0;
 }
 
-P_Node NadiNajmanjiEl(P_Node PrviElUDir, P_Node NadiEl)
-{
-	P_Node P = PrviElUDir;
-
-	while (P->Next != NULL && strcmp(P->ime, NadiEl->ime) < 0)
-		P = P->Next;
-
-	return P;
-}
-
-int ListaDirectory(P_Node Roditelj, P_Stack Head)
-{
-	P_Node TrenutniFile = Roditelj->Dijete;
-
-	printf("%s\n ", Roditelj->ime);
-
-	if (TrenutniFile) {
-		if (Head->Next)
-
-		return -1; 
-	}
-
-	do {
-		if (!TrenutniFile->Dijete)
-			printf(" %s\n ", TrenutniFile->ime);
-		else
-			printf(" %s*\n ", TrenutniFile->ime);
-		TrenutniFile = TrenutniFile->Next;
-	} while (TrenutniFile != NULL);
-
-	return 0;
-}
-
-int Push(P_Stack Head, P_Node Directory)
-{
+int Push(P_Stack Head, P_Node Directory) {
 	P_Stack novi;
 	novi = (P_Stack)malloc(sizeof(struct Stack));
 
@@ -124,8 +121,7 @@ int Push(P_Stack Head, P_Node Directory)
 	return 0;
 }
 
-P_Node Pop(P_Stack Head)
-{
+P_Node Pop(P_Stack Head) {
 	if (!Head->Next)
 		return NULL; 
 
@@ -138,8 +134,7 @@ P_Node Pop(P_Stack Head)
 	return Directory;
 }
 
-int Shell(P_Node root, P_Stack Head)
-{
+int Shell(P_Node root, P_Stack Head) {
 	P_Node Directory = root;
 	int status = 0;
 	int error = 0;
@@ -176,22 +171,20 @@ int Shell(P_Node root, P_Stack Head)
 #endif
 		}
 		else
-			printf("Naredba nije pronaðena!\n");
+			printf("Naredba nije pronaÃ°ena!\n");
 	}
 
 	return 0;
 }
 
-int ValjanArgument(char* arg)
-{
+int ValjanArgument(char* arg) {
 	if (!strlen(arg)) {
 		return 0;
 	}
 	return 1;
 }
 
-int DirectoryPostoji(P_Node Directory, char* ImeDirektorija)
-{
+int DirectoryPostoji(P_Node Directory, char* ImeDirektorija) {
 	P_Node P = Directory->Dijete;
 
 	while (P != NULL && strcmp(P->ime, ImeDirektorija))
@@ -202,9 +195,38 @@ int DirectoryPostoji(P_Node Directory, char* ImeDirektorija)
 
 	return 1;
 }
+int md(P_Node Directory, char* arg) {
+	int error = 0;
 
-P_Node DirectoryPrekoImena(P_Node Directory, char* ImeDirektorija)
-{
+	if (!ValjanArgument(arg))
+		printf("Greska\n");
+	else {
+		error = Unesi(Directory, Novi(arg));
+		if (error == -2)
+			printf("Direktorij veÃ¦ postoji.\n");
+	}
+
+	return error;
+}
+
+int dir(P_Node Directory, char* arg, P_Stack Head) {
+	int error = 0;
+
+	if (ValjanArgument(arg))
+		if (DirectoryPostoji(Directory, arg))
+			error = ListaDirectory(DirectoryPrekoImena(Directory, arg), Head);
+		else
+			printf("Direktorij nije pronaÃ°en!\n");
+	else
+		error = ListaDirectory(Directory, Head);
+
+	if (error == -1)
+		printf("Direktorij je prazan.\n");
+
+	return error;
+}
+
+P_Node DirectoryPrekoImena(P_Node Directory, char* ImeDirektorija) {
 	P_Node P;
 	P = Directory->Dijete;
 
@@ -214,23 +236,9 @@ P_Node DirectoryPrekoImena(P_Node Directory, char* ImeDirektorija)
 	return P;
 }
 
-int md(P_Node Directory, char* arg)
-{
-	int error = 0;
 
-	if (!ValjanArgument(arg))
-		printf("Greska\n");
-	else {
-		error = Unesi(Directory, Novi(arg));
-		if (error == -2)
-			printf("Direktorij veæ postoji.\n");
-	}
 
-	return error;
-}
-
-P_Node cd(P_Node Directory, P_Node* root, char* arg, P_Stack Head)
-{
+P_Node cd(P_Node Directory, P_Node* root, char* arg, P_Stack Head) {
 	int error = 0;
 
 	if (!ValjanArgument(arg))
@@ -248,7 +256,7 @@ P_Node cd(P_Node Directory, P_Node* root, char* arg, P_Stack Head)
 	else {
 		error = Push(Head, Directory);
 		if (error == -1)
-			printf("greška\n");
+			printf("greÅ¡ka\n");
 		else
 			Directory = DirectoryPrekoImena(Directory, arg);
 	}
@@ -256,20 +264,3 @@ P_Node cd(P_Node Directory, P_Node* root, char* arg, P_Stack Head)
 	return Directory;
 }
 
-int dir(P_Node Directory, char* arg, P_Stack Head)
-{
-	int error = 0;
-
-	if (ValjanArgument(arg))
-		if (DirectoryPostoji(Directory, arg))
-			error = ListaDirectory(DirectoryPrekoImena(Directory, arg), Head);
-		else
-			printf("Direktorij nije pronaðen!\n");
-	else
-		error = ListaDirectory(Directory, Head);
-
-	if (error == -1)
-		printf("Direktorij je prazan.\n");
-
-	return error;
-}
