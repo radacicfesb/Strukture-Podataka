@@ -14,17 +14,19 @@ struct Node {
 	P_Node Next;
 };
 
-P_Node DodajNoviEl(void);
+
 P_Node* InicijalizirajTablicu(int);
-int RacunajHash(char*, int);
-int DodajEl(P_Node*, char*, char*, int);
+P_Node DodajNoviEl(void);
+P_Node Nadi(P_Node*, char*, char*);
 int CitajIzDatoteke(P_Node*, char*);
 int IspisiTablicu(P_Node*, int);
+int RacunajHash(char*, int);
+int DodajEl(P_Node*, char*, char*, int);
 int IspisiListu(P_Node, int);
-P_Node Unesi(P_Node, char*, char*);
-P_Node IdiNaPrvi(P_Node, char*);
 int IspisiM_Br(P_Node);
 P_Node Nadi(P_Node*, char*, char*);
+P_Node Unesi(P_Node, char*, char*);
+P_Node IdiNaPrvi(P_Node, char*);
 
 int main() {
 	P_Node* Tablica = InicijalizirajTablicu(11);
@@ -32,12 +34,8 @@ int main() {
 	char prezime[512];
 	char izbor = 'n';
 	
-	//if (argc < 2) {
-		//printf("Unesi ime datoteke!");
-		//return -2;
-	//}
 
-	CitajIzDatoteke(Tablica, "sranje.txt");
+	CitajIzDatoteke(Tablica, "studenti.txt");
 
 	IspisiTablicu(Tablica, 11);
 
@@ -50,6 +48,24 @@ int main() {
 	} while (izbor == 'd');
 
 	return 0;
+}
+
+
+P_Node* InicijalizirajTablicu(int br) {
+	int i = 0;
+	P_Node* Tablica;
+	Tablica = malloc(br * sizeof(P_Node));
+
+	if (!Tablica) {
+		printf("Greska");
+		return -1;
+	}
+
+	for (i = 0; i < br; i++) {
+		Tablica[i] = DodajNoviEl();
+	}
+
+	return Tablica;
 }
 
 P_Node DodajNoviEl(void) {
@@ -70,21 +86,22 @@ P_Node DodajNoviEl(void) {
 	return el;
 }
 
-P_Node* InicijalizirajTablicu(int br) {
-	int i = 0;
-	P_Node* Tablica;
-	Tablica = malloc(br * sizeof(P_Node));
 
-	if (!Tablica) {
-		printf("Greska");
-		return -1;
-	}
 
-	for (i = 0; i < br; i++) {
-		Tablica[i] = DodajNoviEl();
-	}
 
-	return Tablica;
+int DodajEl(P_Node* Tablica, char* Prvi, char* Zadnji, int m_br)
+{
+	int Pozicija = RacunajHash(Zadnji, 11);
+	P_Node el = NULL;
+	P_Node temp = NULL;
+
+	el = Unesi(Tablica[Pozicija], Prvi, Zadnji);
+
+	strcpy(el->Prvi, Zadnji);
+	strcpy(el->Zadnji, Zadnji);
+	el->m_br = m_br;
+
+	return 0;
 }
 
 int RacunajHash(char* prezime, int Vel)
@@ -99,17 +116,17 @@ int RacunajHash(char* prezime, int Vel)
 	return sum % Vel;
 }
 
-int DodajEl(P_Node* Tablica, char* Prvi, char* Zadnji, int m_br)
+
+
+int IspisiTablicu(P_Node* Tablica, int Vel)
 {
-	int Pozicija = RacunajHash(Zadnji, 11);
-	P_Node el = NULL;
-	P_Node temp = NULL;
+	int i = 0;
 
-	el = Unesi(Tablica[Pozicija], Prvi, Zadnji);
-
-	strcpy(el->Prvi, Zadnji);
-	strcpy(el->Zadnji, Zadnji);
-	el->m_br = m_br;
+	for (i = 0; i < Vel; i++)
+		if (Tablica[i]->Next)
+			IspisiListu(Tablica[i]->Next, i);
+		else
+			printf("%d) --- \n", i);
 
 	return 0;
 }
@@ -135,20 +152,6 @@ int CitajIzDatoteke(P_Node* Tablica, char* filename)
 
 	return 0;
 }
-
-int IspisiTablicu(P_Node* Tablica, int Vel)
-{
-	int i = 0;
-
-	for (i = 0; i < Vel; i++)
-		if (Tablica[i]->Next)
-			IspisiListu(Tablica[i]->Next, i);
-		else
-			printf("%d) --- \n", i);
-
-	return 0;
-}
-
 int IspisiListu(P_Node El, int ind)
 {
 	P_Node element = El;
@@ -165,27 +168,6 @@ int IspisiListu(P_Node El, int ind)
 	return 0;
 }
 
-P_Node Unesi(P_Node red, char* Prvi, char* Zadnji)
-{
-	P_Node el = red;
-	P_Node temp = NULL;
-
-	while (el->Next && strcmp(Zadnji, el->Next->Zadnji) > 0)
-		el = el->Next;
-
-	if (el->Next && !strcmp(Zadnji, el->Next->Zadnji)) {
-		el = IdiNaPrvi(red, Zadnji);
-		while (el->Next && !strcmp(Zadnji, el->Next->Zadnji) && strcmp(Prvi, el->Next->Prvi) > 0)
-			el = el->Next;
-	}
-
-	temp = el->Next;
-	el->Next = DodajNoviEl();
-	el = el->Next;
-	el->Next = temp;
-
-	return el;
-}
 
 P_Node IdiNaPrvi(P_Node El, char* Zadnji)
 {
@@ -211,6 +193,29 @@ P_Node Nadi(P_Node* Tablica, char* ime, char* prezime)
 
 	return el;
 }
+
+P_Node Unesi(P_Node red, char* Prvi, char* Zadnji)
+{
+	P_Node el = red;
+	P_Node temp = NULL;
+
+	while (el->Next && strcmp(Zadnji, el->Next->Zadnji) > 0)
+		el = el->Next;
+
+	if (el->Next && !strcmp(Zadnji, el->Next->Zadnji)) {
+		el = IdiNaPrvi(red, Zadnji);
+		while (el->Next && !strcmp(Zadnji, el->Next->Zadnji) && strcmp(Prvi, el->Next->Prvi) > 0)
+			el = el->Next;
+	}
+
+	temp = el->Next;
+	el->Next = DodajNoviEl();
+	el = el->Next;
+	el->Next = temp;
+
+	return el;
+}
+
 
 int IspisiM_Br(P_Node el)
 {
