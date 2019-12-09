@@ -30,8 +30,8 @@ int main() {
 	 UnesiElement(5, Root);
 	 UnesiElement(234, Root);
 	 UnesiElement(12, Root);
-	 Root = BrisiElement(234, Root);
-	 Trazeno = NadiElement(Root, 4);
+	 //Root = BrisiElement(234, Root);
+	 //Trazeno = NadiElement(Root, 4);
 
 	IspisiStablo(Root);
 	
@@ -59,53 +59,56 @@ P_Node UnesiElement(int x, P_Node root) {
 
 int IspisiStablo(P_Node root)
 {
-	if (root == NULL)
-		return 0;
+	if (root != NULL) {
 
 	IspisiStablo(root->Levo);
 
 	IspisiStablo(root->Desno);
 
 	printf("%d ", root->el);
+	}
 	return 0;
 }
 
 P_Node BrisiElement(P_Node P, int x) {
 	P_Node temp;
-
+	if(S != NULL) {
 	 if (x < P->el)
 		P->Levo = BrisiElement(P->Levo, x);
 	else if (x > P->el)
 		P->Desno = BrisiElement(P->Desno, x);
 	else  {
-		if (P->Levo != NULL && P->Desno != NULL) {
+		if (P->Levo != NULL && P->Desno != NULL) { 
 		
 		temp = NadiMin(P->Desno);
 		P->el = temp->el;
-		P->Desno = BrisiElement(P->Desno, temp->el);
+		P->Desno = BrisiElement(P->Desno, temp->el);//dvoje djece
 		
 	}
 	else
 	{
 		temp = P;
 		if (P->Levo == NULL)
-			P = P->Desno;
+			P = P->Desno;//0 ili 1 dijete
 		else
 			P = P->Levo;
 		free(temp);
+		}
 	}
-}
-
-return P;
+	}	
+	return P;
 }
 
 P_Node NadiMin(P_Node P) {
-	if (P != NULL && P->Levo != NULL)
+	if (P != NULL)
 	{
-		return NadiMin(P->Levo);
+		if (P->Levo == NULL)
+			return P;
+		else
+			return NadiMin(P->Levo);
 	}
-
-	return P;
+	else
+		return P;
 }
 
 P_Node NadiMax(P_Node P) {
@@ -119,13 +122,14 @@ P_Node NadiMax(P_Node P) {
 
 P_Node NadiElement(P_Node P, int x)
 {
-	if (P == NULL)
+	if (P != NULL)
+	{
+	if (P->el == x)
 		return P;
-
-	if (P->el < x)
-		return NadiElement(P->Desno, x);
 	else if (P->el > x)
 		return NadiElement(P->Levo, x);
 	else
-		return P;
+		return NadiElement(P->Desno, x);
+	}
+	else return NULL;
 }
