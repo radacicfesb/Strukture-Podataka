@@ -8,8 +8,8 @@
 
 typedef struct Node* P_Node;
 struct Node {
-	char Prvi[512];
-	char Zadnji[512];
+	char Ime[512];
+	char Prezime[512];
 	int m_br;
 	P_Node Next;
 };
@@ -77,8 +77,8 @@ P_Node DodajNoviEl(void) {
 		return -1;
 	}
 
-	memset(el->Prvi, 0, 512);
-	memset(el->Zadnji, 0, 512);
+	memset(el->Ime, 0, 512);
+	memset(el->Prezime, 0, 512);
 
 	el->m_br = 0;
 	el->Next = NULL;
@@ -91,14 +91,14 @@ P_Node DodajNoviEl(void) {
 
 int DodajEl(P_Node* Tablica, char* Prvi, char* Zadnji, int m_br)
 {
-	int Pozicija = RacunajHash(Zadnji, 11);
+	int Pozicija = RacunajHash(Prezime, 11);
 	P_Node el = NULL;
 	P_Node temp = NULL;
 
-	el = Unesi(Tablica[Pozicija], Prvi, Zadnji);
+	el = Unesi(Tablica[Pozicija], Ime, Prezime);
 
-	strcpy(el->Prvi, Zadnji);
-	strcpy(el->Zadnji, Zadnji);
+	strcpy(el->Ime, Prezime);
+	strcpy(el->Prezime, Prezime);
 	el->m_br = m_br;
 
 	return 0;
@@ -140,12 +140,12 @@ int CitajIzDatoteke(P_Node* Tablica, char* filename)
 		return -1;
 
 	while (!feof(fp)) {
-		char Prvi[512];
-		char Zadnji[512];
+		char Ime[512];
+		char Prezime[512];
 		int m_br;
 		fgets(buff, 512, fp);
-		sscanf(buff, "%s %s %d", Prvi, Zadnji, &m_br);
-		DodajEl(Tablica, Zadnji, Prvi, m_br);
+		sscanf(buff, "%s %s %d", Ime, Prezime, &m_br);
+		DodajEl(Tablica, Prezime, Ime, m_br);
 	}
 
 	fclose(fp);
@@ -159,7 +159,7 @@ int IspisiListu(P_Node El, int ind)
 	printf("%d)", ind);
 
 	do {
-		printf(" %s %s\t", element->Prvi, element->Zadnji);
+		printf(" %s %s\t", element->Prvi, element->Prezime);
 		element = element->Next;
 	} while (element);
 
@@ -169,11 +169,11 @@ int IspisiListu(P_Node El, int ind)
 }
 
 
-P_Node IdiNaPrvi(P_Node El, char* Zadnji)
+P_Node IdiNaPrvi(P_Node El, char* Prezime)
 {
 	P_Node element = El;
 
-	while (strcmp(element->Next->Zadnji, Zadnji))
+	while (strcmp(element->Next->Prezime, Prezime))
 		element = element->Next;
 
 	return element;
@@ -186,7 +186,7 @@ P_Node Nadi(P_Node* Tablica, char* ime, char* prezime)
 	P_Node el = Tablica[Pozicija]->Next;
 
 	while (el)
-		if (!strcmp(el->Zadnji, prezime) && !strcmp(el->Prvi, ime))
+		if (!strcmp(el->Prezime, prezime) && !strcmp(el->Ime, ime))
 			return el;
 		else
 			el = el->Next;
@@ -199,12 +199,12 @@ P_Node Unesi(P_Node red, char* Prvi, char* Zadnji)
 	P_Node el = red;
 	P_Node temp = NULL;
 
-	while (el->Next && strcmp(Zadnji, el->Next->Zadnji) > 0)
+	while (el->Next && strcmp(Prezime, el->Next->Prezime) > 0)
 		el = el->Next;
 
-	if (el->Next && !strcmp(Zadnji, el->Next->Zadnji)) {
-		el = IdiNaPrvi(red, Zadnji);
-		while (el->Next && !strcmp(Zadnji, el->Next->Zadnji) && strcmp(Prvi, el->Next->Prvi) > 0)
+	if (el->Next && !strcmp(Prezime, el->Next->Prezime)) {
+		el = IdiNaPrvi(red, Prezime);
+		while (el->Next && !strcmp(Prezime, el->Next->Prezime) && strcmp(Ime, el->Next->Ime) > 0)
 			el = el->Next;
 	}
 
