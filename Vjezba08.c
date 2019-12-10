@@ -19,7 +19,7 @@ struct Stack {
 	P_Stack Next;
 };
 
-int Shell(P_Node, P_Stack);
+int Nareba(P_Node, P_Stack);
 int Push(P_Stack, P_Node);
 P_Node Novi(char*);
 int Unesi(P_Node, P_Node);
@@ -134,7 +134,7 @@ P_Node Pop(P_Stack Head) {
 	return Directory;
 }
 
-int Shell(P_Node root, P_Stack Head) {
+int Naredba(P_Node root, P_Stack Head) {
 	P_Node Directory = root;
 	int status = 0;
 	int error = 0;
