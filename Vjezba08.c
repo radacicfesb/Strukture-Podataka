@@ -163,13 +163,9 @@ int Naredba(P_Node root, P_Stack Head) {
 		}
 		else if (!strcmp(naredba, "exit"))
 			status = 1;
-		else if (!strcmp(naredba, "clear") || !strcmp(naredba, "cls")) {
-#if __linux__
-			system("clear");
-#elif _WIN32
+		else if (!strcmp(naredba, "cls")) 
 			system("cls");
-#endif
-		}
+
 		else
 			printf("Naredba nije pronaðena!\n");
 	}
