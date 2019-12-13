@@ -159,7 +159,7 @@ int IspisiListu(P_Node El, int ind)
 	printf("%d)", ind);
 
 	do {
-		printf(" %s %s\t", element->Prvi, element->Prezime);
+		printf(" %s %s\t", element->Ime, element->Prezime);
 		element = element->Next;
 	} while (element);
 
@@ -194,7 +194,7 @@ P_Node Nadi(P_Node* Tablica, char* ime, char* prezime)
 	return el;
 }
 
-P_Node Unesi(P_Node red, char* Prvi, char* Zadnji)
+P_Node Unesi(P_Node red, char* Ime, char* Zadnji)
 {
 	P_Node el = red;
 	P_Node temp = NULL;
