@@ -41,7 +41,7 @@ int main() {
 	Head->Next = NULL;
 	Head->Directory = NULL;
 
-	return Shell(root, Head);
+	return Naredba(root, Head);
 }
 
 
